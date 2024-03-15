@@ -96,17 +96,16 @@ with col3:
         key = "image_size",
         help = "Finn en passende verdi")
 
-# with col4:
-#     words = "relevans år forfatter boktittel".split()
-#     columns = st.number_input(
-#         "Antall kolonner", 
-#         min_value = 1,
-#         max_value = 50,
-#         value = st.session_state.get('cols',4),
-#         key='cols')
+with col4:
+    columns = st.number_input(
+        "Antall treff", 
+        min_value = 1,
+        max_value = 50,
+        value = st.session_state.get('cols',10),
+        key='cols')
 
 search = f"NEAR({search}, {dist})"
-resbook = [x[0] for x in ims.image(search,hits=20).values()]
+resbook = [x[0] for x in ims.image(search,hits=st.session_state.get('cols')).values()]
 
 #st.image(resbook, width=part, caption=list(range(len(resbook))))
 
