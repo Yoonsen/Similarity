@@ -143,9 +143,9 @@ st.markdown("Klikk på et bilde for å se lignende")
 
 if st.session_state.target != "" :
     try:
-        st.session_state.similar = [x[0] for x in similar(st.session_state.target, 50)]
+        st.session_state.similar = [x[0] for x in similar(st.session_state.target, 20)]
     except:
-        st.session_state.similar = [x[0] for x in similar( st.session_state.target, 50)]
+        st.session_state.similar = [x[0] for x in similar( st.session_state.target, 20)]
     
     #st.write(display_finds(st.session_state.similar, 10, st.session_state.cols, width=part))
     st.markdown(f"Her er illustrasjoner som ligner den valgte. For å ser illustrasjonen i teksten, klikk her {link(st.session_state.target)} ")
