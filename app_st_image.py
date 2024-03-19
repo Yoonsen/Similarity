@@ -165,7 +165,7 @@ col1, col2, col3 = st.columns([3,3,3])
 if st.session_state.target != "":
     with col2:
         st.markdown(f"""![Valgte bilde]({st.session_state.target}#center)""")
-        st.markdown(f"[Se bildet i boken i nettbiblioteket]({link(st.session_state.target)})")
+        st.markdown(f"### [Se bildet i boken i nettbiblioteket]({link(st.session_state.target)})")
     st.session_state.sim_click = clickable_images(
         st.session_state.similar,
         titles=[f"Klikk for lignende" for i in range(len(st.session_state.similar))],
