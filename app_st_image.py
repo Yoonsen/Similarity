@@ -69,7 +69,25 @@ if "image_size" not in st.session_state:
     st.session_state["image_size"] = 150
 if "sortby" not in st.session_state:
     st.session_state["sortby"] = "relevans"
-    
+
+if "target" not in st.session_state:
+    st.session_state['target'] = ""
+
+if "book_click" not in st.session_state:
+    st.session_state['book_click'] = -1
+if "sim_click" not in st.session_state:
+    st.session_state['sim_click'] = -1
+
+if "previous_book_click" not in st.session_state:
+    st.session_state['previous_book_click'] = -1
+if "previous_sim_click" not in st.session_state:
+    st.session_state['previous_sim_click'] = -1
+if "sim_click_changed" not in st.session_state:
+    st.session_state['sim_click_changed'] = False
+
+#st.write("simclick changed", st.session_state.sim_click_changed)
+
+
 with col1:
     search = st.text_input(
         'Skriv en liste med ord eller fraser for å finne illustrasjoner i nærheten av frasen/ordene', 
@@ -109,58 +127,59 @@ resbook = [x[0] for x in ims.image(search,hits=st.session_state.get('cols')).val
 
 #st.image(resbook, width=part, caption=list(range(len(resbook))))
 
-clicked = clickable_images(
-     resbook,
-    titles=[f"Klikk for å se lignende bilder til {i}" for i in resbook],
+#####
+##### Display search pane
+#####
+
+st.session_state.book_click = clickable_images(
+    resbook,
+    titles=[f"Klikk for lignende" for i in resbook],
     div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
-    img_style={"margin": "2px", "height": f"{part}px"}
+    img_style={"margin": "2px", "height": f"{part}px"},
+    key = "search_images"
 )
 
-if "target" not in st.session_state:
-    st.session_state['target'] = ""
+####
+#### Change the click pane 
+####
 
-if "book_click" not in st.session_state:
-    st.session_state['book_click'] = -1
-    
-click_changed = clicked != st.session_state.book_click 
-st.session_state['book_click'] = clicked
-if click_changed:
-    st.session_state['target'] = resbook[st.session_state.book_click]
+#st.write(st.session_state.previous_book_click, st.session_state.book_click)
+book_click_changed = st.session_state.previous_book_click != st.session_state.book_click 
+st.session_state.previous_book_click = st.session_state.book_click
+
+if book_click_changed:
+    #st.write('pane 1 book!!!')
+    st.session_state.target = resbook[st.session_state.book_click]
+    st.session_state.similar = [x[0] for x in similar(st.session_state.target, 20)]
+
+
 
 st.markdown("## Lignende bilder")
-st.markdown("Klikk på et bilde for å se lignende")
 
-
-# col11, col21, col31 = st.columns([3,3,4])
-
-# with col11:
-#     image_num = st.number_input("Angi tallet ved bildet du vil se lignende bilder for", min_value=0, value=0)
-
-# with col21:
-#     source = st.selectbox("Angi kilde: fra boksøket over eller bildene under", ['bok','lignende bilder'], index=0, key='source')
- 
-
-
-if st.session_state.target != "" :
-    try:
-        st.session_state.similar = [x[0] for x in similar(st.session_state.target, 20)]
-    except:
-        st.session_state.similar = [x[0] for x in similar( st.session_state.target, 20)]
-    
-    #st.write(display_finds(st.session_state.similar, 10, st.session_state.cols, width=part))
-    st.markdown(f"Her er illustrasjoner som ligner den valgte. For å ser illustrasjonen i teksten, klikk her {link(st.session_state.target)} ")
-
-    clicked_sim = clickable_images(
+# if st.session_state.target != "" :
+#     st.markdown(f"Informasjon om valgte bilde {link(st.session_state.target)} ")
+#     #st.markdown(f"""![Valgte bilde]({st.session_state.target}#center)""")
+# else:
+#     st.session_state.similar = []
+col1, col2, col3 = st.columns([3,3,3])
+if st.session_state.target != "":
+    with col2:
+        st.markdown(f"""![Valgte bilde]({st.session_state.target}#center)""")
+        st.markdown(f"Gå til boken {link(st.session_state.target)} ")
+    st.session_state.sim_click = clickable_images(
         st.session_state.similar,
-        titles=[f"Klikk for å se bilde #{i}" for i in range(len(st.session_state.similar))],
+        titles=[f"Klikk for lignende" for i in range(len(st.session_state.similar))],
         div_style={"display": "flex", "justify-content": "center", "flex-wrap": "wrap"},
-        img_style={"margin": "2px", "height": f"{part}px"}
+        img_style={"margin": "2px", "height": f"{part}px"},
+        key="similar_images"
     )
-    
-    clicked_sim_changed = clicked_sim != st.session_state.get('sim_click', -1)
-    st.session_state['sim_click'] = clicked_sim
-    if clicked_sim_changed:
-        st.session_state.target=st.session_state.similar[st.session_state.sim_click]
-        
-    #st.write(st.session_state.sim_click, st.session_state.book_click)
 
+st.session_state.sim_click_changed = st.session_state.previous_sim_click != st.session_state.sim_click
+#st.write(st.session_state.previous_sim_click, st.session_state.sim_click)
+st.session_state.previous_sim_click = st.session_state.sim_click
+
+if st.session_state.sim_click_changed:
+    st.session_state.target = st.session_state.similar[st.session_state.sim_click]
+    st.session_state.similar = [x[0] for x in similar(st.session_state.target, 20)]
+    st.rerun()
+    
