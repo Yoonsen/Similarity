@@ -62,7 +62,7 @@ st.markdown("Finn bilder i bøker med tekstsøk, og bruk bildene til å finne li
 col1, col2, col3, col4 = st.columns([5,2,2,2])
 
 if "search" not in st.session_state:
-    st.session_state['search'] = 'luftsprang'
+    st.session_state['search'] = 'daguerrotypi'
 if "distance" not in st.session_state:
     st.session_state['distance'] = 5
 if "image_size" not in st.session_state:
@@ -165,7 +165,7 @@ col1, col2, col3 = st.columns([3,3,3])
 if st.session_state.target != "":
     with col2:
         st.markdown(f"""![Valgte bilde]({st.session_state.target}#center)""")
-        st.markdown(f"Gå til boken {link(st.session_state.target)} ")
+        st.markdown(f"[Se bildet i boken i nettbiblioteket]({link(st.session_state.target)})")
     st.session_state.sim_click = clickable_images(
         st.session_state.similar,
         titles=[f"Klikk for lignende" for i in range(len(st.session_state.similar))],
